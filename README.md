@@ -19,9 +19,6 @@ Rapid advances in AI-driven molecular structure prediction have outpaced the dev
   $ ./exe/TMscoreC ./example/pred.pdb ./example/pdb.pdb
 ~~~
 
-## Example of Result
-![atlas](figures/output_example.png)
-
 ## Contributing
 If you encounter problems using TM-score-Comp, feel free to contact Dr. Jun Hu (hj@ism.cams.cn)! We also welcome pull requests from the community.
 
