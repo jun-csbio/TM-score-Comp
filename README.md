@@ -20,21 +20,6 @@ Structural comparison between native and predicted structures is the gold-standa
   In Linux System
   $ ./exe/TMscoreC -h
   $ ./exe/TMscoreC ./example/pdb.pdb ./example/pred.pdb
-
-  or in Windows System
-  $ ./exe/TMscoreC.exe -h
-  $ ./exe/TMscoreC.exe ./example/pdb.pdb ./example/pred.pdb
-~~~
-
-## Run Multi-Thread TM-score-Comp
-~~~
-  In Linux System
-  $ ./exe/TMscoreCmt -h
-  $ ./exe/TMscoreCmt ./example/pdb.pdb ./example/pred.pdb
-
-  or in Windows System
-  $ ./exe/TMscoreCmt.exe -h
-  $ ./exe/TMscoreCmt.exe ./example/pdb.pdb ./example/pred.pdb
 ~~~
 
 ## Example of Result
