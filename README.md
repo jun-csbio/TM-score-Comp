@@ -1,8 +1,8 @@
 ![atlas](figures/logo.png)
 # TM-score-Comp
-TM-score-Comp: a quick and accurate algorithm for measuring quality of complex structure predictions of proteins, nucleic acids, and small molecule ligands
+TM-score-Comp: a quick and accurate method for assessing qualities of complex structure predictions of proteins, nucleic acids, and small molecule ligands
 
-Structural comparison between native and predicted structures is the gold-standard way for accessing the quality of 3D structure predictions. As structure prediction advances to include complex structures with different molecule types, developing structure comparison methods to accurately assess predictions for diverse molecules (proteins, nucleic acids, small molecules) in various forms (monomers, oligomers, and polymers) is critical for advancing structural bioinformatics. However, the existing structure comparison methods cannot directly evaluate predicted complexes consisting of proteins, nucleic acids, and small molecule ligands, nor can they provide optimal/suboptimal molecule mappings for homologous polymers within a limited timeframe. We have developed a new and open-source structure comparison method, TM-score-Comp, to quickly and accurately measure the quality of structure predictions of complexes composed of one or more molecule types, such as proteins, DNAs, RNAs, and small molecule ligands. Large-scale benchmarks demonstrated consistent advantages of TM-score-Comp over state-of-the-art methods in the assessment of 3D structure predictions of different molecule types and runs more than 5 times faster on average, especially for those with homologous molecules. Detailed analyses demonstrated that the main advantage of TM-score-Comp lies in the molecule mapping algorithm can always give an optimal/suboptimal molecule mapping results in fast, resulting the improvement of the accuracy and speed of the complex structure comparison process. The on-line web server and source code of TM-score-Comp are made freely available at <b>https://zhanglab.comp.nus.edu.sg/TM-score-Comp/</b> for academical use.
+Rapid advances in AI-driven molecular structure prediction have outpaced the development of robust evaluation tools, making accurate and scalable structure comparison a critical bottleneck. Structural comparison between predicted and native complexes remains the essential gold standard, yet it becomes increasingly challenging for heterogeneous assemblies involving proteins, nucleic acids, and small-molecule ligands. Existing methods either lack a unified, size-independent scoring framework or become impractical for complexes with homologous components and symmetric ligands, where correspondence ambiguity leads to prohibitive computational cost. We present TM-score-Comp, an open-source framework for efficient and accurate evaluation of multi-component complexes. TM-score-Comp generalizes TM-score to heterogeneous assemblies and introduces two complementary metrics—rTM-score to assess molecular orientation and iTM-score to quantify interface accuracy—together enabling multi-level structural assessment. By combining orientation-aware molecule mapping with topology-guided atom mapping, TM-score-Comp achieves improved accuracy and >5× speedup over state-of-the-art methods, providing a scalable and standardized evaluation tool for complex structure prediction. The on-line web server and source code of TM-score-Comp are made freely available at <b>https://zhanglab.comp.nus.edu.sg/TM-score-Comp/</b> for academical use.
 
 ## Installation:
 * Download this repository at https://github.com/jun-csbio/TM-score-Comp.git. Then, uncompress it and run the following command lines on Linux System.
@@ -13,20 +13,17 @@ Structural comparison between native and predicted structures is the gold-standa
   $ ./make.sh
 ~~~
 
-* If you want run TM-score-Comp in Windows System. You can directly run the files of "./exe/TMscoreC.exe" or "./exe/TMscoreCmt.exe".
-
-## Run Single-Thread TM-score-Comp
+## Run TM-score-Comp
 ~~~
-  In Linux System
   $ ./exe/TMscoreC -h
-  $ ./exe/TMscoreC ./example/pdb.pdb ./example/pred.pdb
+  $ ./exe/TMscoreC ./example/pred.pdb ./example/pdb.pdb
 ~~~
 
 ## Example of Result
 ![atlas](figures/output_example.png)
 
 ## Contributing
-If you encounter problems using TM-score-Comp, feel free to create an issue! We also welcome pull requests from the community.
+If you encounter problems using TM-score-Comp, feel free to contact Dr. Jun Hu (hj@ism.cams.cn)! We also welcome pull requests from the community.
 
 ## References
-Jun Hu, Weikang Gong, Biao Zhang and Yang Zhang. TM-score-Comp: a quick and accurate tool for assessing quality of complex structure predictions of proteins, nucleic acids, and small molecule ligands. XXXX, XX(XX): XXXX-XXXX.
+Jun Hu, Weikang Gong, Biao Zhang and Yang Zhang. TM-score-Comp: a quick and accurate method for assessing qualities of complex structure predictions of proteins, nucleic acids, and small molecule ligands. XXXX, XX(XX): XXXX-XXXX.
