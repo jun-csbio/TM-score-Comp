@@ -1403,6 +1403,8 @@ int main(int argc, char** args) {
 	bool isTemplProvide = false;
   	bool isSaveRotTemplInPDB = false;
   	string saveRotTemplInPDBPath;
+  	bool isSaveRotQueryInPDB = false;
+  	string saveRotQueryInPDBPath;
   	bool isSaveUt = false;
 	string saveUtPath;
 	bool isSaveSuperpostion = false;
@@ -1566,7 +1568,11 @@ int main(int argc, char** args) {
 			isSaveRotTemplInPDB = true;
       		saveRotTemplInPDBPath = args[i+1];
       		i++;
-      	}else if (0 == strcmp(args[i], "-oweb") && i < argc-1){
+		}else if (0 == strcmp(args[i], "-o1") && i < argc-1){
+			isSaveRotQueryInPDB = true;
+      		saveRotQueryInPDBPath = args[i+1];
+      		i++;
+		}else if (0 == strcmp(args[i], "-oweb") && i < argc-1){
 			isSaveWebNeedSuperposition = true;
 			saveWebNeedSuperpositionPath = args[i+1];
       		i++;
@@ -1664,6 +1670,9 @@ int main(int argc, char** args) {
 	
 	if (isSaveRotTemplInPDB)
 		mtm->save_roted_templ(saveRotTemplInPDBPath);
+		
+	if (isSaveRotQueryInPDB)
+		mtm->save_roted_query(saveRotQueryInPDBPath);
 	
 	if (isSaveUt)
 		mtm->save_invUt(saveUtPath);
@@ -13473,7 +13482,7 @@ inline void CTMscoreComplex::print_result(){
 				
 				cout << buf << endl;
 				k++;
-			}	
+			}
 		}
 		
 		if (0 == qlig_num || 0 == tlig_num){
