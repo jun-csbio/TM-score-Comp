@@ -14,9 +14,6 @@
 using namespace std;
 
 /******************************************************************
- * Please noted that we exchange the query and template when user 
- * inputted and print the results 
- * 
  * Please use the following CMD to compile this program.
  * 1. conda create -n gcc-g++ python=3.10
  * 2. conda install -c conda-forge gcc gxx
