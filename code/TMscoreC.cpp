@@ -1653,8 +1653,8 @@ int main(int argc, char** args) {
 	if ((g_is_inputed_chain_alignment && g_use_chain_order_or_not) 
 		 || (g_is_inputed_chain_alignment && g_ali_type == SLOW) 
 		 || (g_use_chain_order_or_not && g_ali_type == SLOW)){
-		cout << "WRONG USAGE: Note that, only one of the options of '-ia', '-da y', and '-pts slw' can be applied at the same time." << endl;
-		cout << "But you apply two of options of '-ia', '-da y', and '-pts slw' at least. Please check and re-run it." << endl;
+		cout << "WRONG USAGE: Note that, only one of the options of '-da y' and '-pts slw' can be applied at the same time." << endl;
+		cout << "But you apply two of options of '-da y' and '-pts slw' at least. Please check and re-run it." << endl;
 		exit(1);
 	}
 	
@@ -1772,6 +1772,22 @@ inline void CTMscoreComplex::align_multimer_fast_buf_inaccuracy_using_nwalign_an
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, this->qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -1949,6 +1965,22 @@ inline void CTMscoreComplex::align_multimer_fast_buf_inaccuracy_using_nwalign_an
 			}
 		}
 		CBaseFunc::delete2Darr(scomtx, this->qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -2175,6 +2207,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, qsize); 
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -2489,6 +2537,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, qsize); 
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -3234,6 +3298,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, qsize); 
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -4176,6 +4256,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		
 		CBaseFunc::delete2Darr(all_single_scomtx, qsize);
 		CBaseFunc::delete2Darr(scomtx, qsize); 
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -4579,14 +4675,14 @@ inline void CTMscoreComplex::prepare_for_multimer(const bool& use_atom_or_residu
 	} 
 	
 	total_res_num = total_res_in_pro_num + total_nuc_in_dna_num + total_nuc_in_rna_num + total_atm_in_lig_num;
-//	d0_pro = CBaseFunc::d0_of_tmscore(total_res_in_pro_num);
-//	d0_dna = CBaseFunc::d0_of_tmscore_c3prime(total_nuc_in_dna_num);
-//	d0_rna = CBaseFunc::d0_of_tmscore_c3prime(total_nuc_in_rna_num);
-//	d0_lig = CBaseFunc::d0_of_lsscore(total_atm_in_lig_num);
-	d0_pro = CBaseFunc::d0_of_tmscore(total_res_num);
-	d0_dna = CBaseFunc::d0_of_tmscore_c3prime(total_res_num);
-	d0_rna = CBaseFunc::d0_of_tmscore_c3prime(total_res_num);
-	d0_lig = CBaseFunc::d0_of_lsscore(total_res_num);
+	d0_pro = CBaseFunc::d0_of_tmscore(total_res_in_pro_num);
+	d0_dna = CBaseFunc::d0_of_tmscore_c3prime(total_nuc_in_dna_num);
+	d0_rna = CBaseFunc::d0_of_tmscore_c3prime(total_nuc_in_rna_num);
+	d0_lig = CBaseFunc::d0_of_lsscore(total_atm_in_lig_num);
+//	d0_pro = CBaseFunc::d0_of_tmscore(total_res_num);
+//	d0_dna = CBaseFunc::d0_of_tmscore_c3prime(total_res_num);
+//	d0_rna = CBaseFunc::d0_of_tmscore_c3prime(total_res_num);
+//	d0_lig = CBaseFunc::d0_of_lsscore(total_res_num);
 	d02_pro = d0_pro*d0_pro;
 	d02_dna = d0_dna*d0_dna;
 	d02_rna = d0_rna*d0_rna;
@@ -5111,6 +5207,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -5385,6 +5497,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -6090,6 +6218,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_nwalign_and_greadsearch
 		
 		CBaseFunc::delete2Darr(all_single_scomtx, qsize);
 		CBaseFunc::delete2Darr(scomtx, qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -6814,6 +6958,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_not_nwalign_and_greadse
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, this->qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -7032,6 +7192,22 @@ inline void CTMscoreComplex::align_multimer_normal_using_not_nwalign_and_greadse
 		}
 		
 		CBaseFunc::delete2Darr(scomtx, this->qsize);
+	}else{
+		for (i = 0; i < this->qsize; i++){
+			Molecule* imol = (*(this->query))[i];
+			const vector<double*> ixyzs = imol->get_cared_xyz_vec();
+			
+			for (j = 0; j < this->tsize; j++){
+				Molecule* jmol = (*(this->templ))[j];
+				const vector<double*> jxyzs = jmol->get_cared_xyz_vec();
+				
+				int* i2j = this->get_ij_qt_match_mtx(i, j);
+				if (NULL == i2j)
+					continue;
+				
+				individual_tmscore_mtx[i][j] = CBaseFunc::cal_rot_tran_from_query_to_templ__(ixyzs, jxyzs, u, t, this->chain_index_corr_to_query__d0[i], i2j, fast);
+			}
+		}
 	}
 	
 	vector<double*> aress;
@@ -12820,9 +12996,9 @@ inline void CTMscoreComplex::save_superposition_ditances(const string& savepath)
 			}
 			
 			fout << buf << endl;
-			k++; 
+			k++;
 		}
-	}	
+	}
 	fout << "------------------------------------------------------------------" << endl;
 	fout << "* 'ant' means amino acid type, nucletide type, or atom type, resp-" << endl;
 	fout << "  ectively."<<endl; 
@@ -13441,8 +13617,11 @@ inline const vector<CHAIN_PAIR>* CBaseFunc::parse_matched_chain_pairs(const stri
 			exit(1);
 		}
 		CHAIN_PAIR p;
-		p.qchain = items[0];
-		p.tchain = items[1];
+//		p.qchain = items[0];
+//		p.tchain = items[1];
+		// we exchange the query and templ inputs
+		p.qchain = items[1];
+		p.tchain = items[0];
 		
 		ans->push_back(p);
 	}
@@ -13756,11 +13935,8 @@ inline void CBaseFunc::print_help(const char* arg){
 		 << "   -s        Select TM-score or rTM-score to search the best superposition." << endl
 		 << "               t (default and strongly suggested): use TM-score " << endl
 		 << "               r                                 : use rTM-score " << endl
-		 << "   -d0       The TM-score scaled by an assigned d0, e.g., '-d0 3.5' reports MaxSub" << endl
-		 << "             score, where d0 is 3.5 Angstrom." << endl
-		 << "   -da       Is molecule order information in two inputted pdb files matched? Note " << endl
-		 << "             that, only one of the options of '-ia', and '-da y' can be applied at " << endl 
-		 << "             the same time." << endl
+		 << "   -d0       The TM-score scaled by an assigned d0, e.g., '-d0 3.5', which is only useful when '-s t'" << endl
+		 << "   -da       Is molecule order information in two inputted pdb files matched?" << endl
 		 << "               y          : using molecule order in inputted files to generate molecule mapping" << endl
 		 << "               n (default): genrating molecule mapping automatically" << endl
 		 << "   -ffm      Setting the file formats of two inputted structures:" << endl
@@ -13770,8 +13946,6 @@ inline void CBaseFunc::print_help(const char* arg){
 		 << "                               https://mmcif.wwpdb.org/docs/tutorials/content/atomic-description.html)." << endl
 		 << "               auto (default): the formats of two inputted files are different, this program will check " << endl
 		 << "                               them to be one of 'PDB' and 'mmCIF' automatically." << endl
-		 << "   -ia       Input molecule mapping txt file path (see detail in README). Note that" << endl
-		 << "             only one of the options of '-ia', and '-da y' can be applied at once" << endl 
 		 << "   -ri       Are residue/nucletide/atom indexes of the homologous protein/DNA(RNA)/ligand" << endl
 		 << "             molecules in the inputted pdb files matched?" << endl
 		 << "               y          : using the matched residue/nucleotide/atom indexes to generate" << endl
@@ -13817,7 +13991,7 @@ inline void CBaseFunc::print_help(const char* arg){
 		 << "             THAT YOU WANT MORE L_init NUMBER, WHICH MAY GIVE YOU A HIGH SCORE VALUE." << endl
 		 << "   -clig     Whether re-mapping ligand atom pairs in every scoring time or just at begining." << endl 
 		 << "             Note that, this option is just worked on \"-mode normal\", and cannot worked with " << endl
-		 << "             options of \"-ia\", \"-da y\", and \"-ri y\"" << endl
+		 << "             options of \"-da y\" and \"-ri y\"" << endl
 		 << "               y (defualt): re-mapping ligand atom pair in every scoring time." << endl
 		 << "               n          : re-mapping ligand atom pair just at begining." << endl
 		 << "   -o        Save the Structure 1 with PDB format after superposition to file." << endl
@@ -13829,7 +14003,6 @@ inline void CBaseFunc::print_help(const char* arg){
 		 << "    "<< arg <<" predicted.cif native.cif" << endl
 		 << "    "<< arg <<" predicted.pdb native.pdb -mol all" << endl
 		 << "    "<< arg <<" predicted.pdb native.pdb -da y" << endl
-		 << "    "<< arg <<" predicted.pdb native.pdb -ia chain_align.txt" << endl
 		 << "    "<< arg <<" predicted.pdb native.pdb -ri y" << endl
 		 << "    "<< arg <<" predicted.pdb native.pdb -sid 0.9" << endl
 		 << "    "<< arg <<" predicted.pdb native.pdb -o rotatted_predicted.pdb" << endl
