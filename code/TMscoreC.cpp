@@ -105,6 +105,7 @@ int g_maxmum_number_of_L_init = 6; // !maximum number of L_init
 bool g_is_output_in_detail = false;
 
 string g_atomtype_nuc = " C3'";
+string g_atomtype_nuc_another_choise = " C3*";
 string g_atomtype_res = " CA ";
 
 string TOOL_EXE = "TM-score-Complex";
@@ -1267,26 +1268,44 @@ class CTMscoreComplex {
 
 inline double CTMscoreComplex::calcluate_itmscore(const double& interact_dis_cut_pow2){
 	vector<INTERFACE_PAIR> interface_pair_in_query = query->parse_interface_pair(interact_dis_cut_pow2);
-	if (0 == interface_pair_in_query.size())
+	vector<INTERFACE_PAIR> interface_pair_in_templ = templ->parse_interface_pair(interact_dis_cut_pow2);
+	if (0 == (interface_pair_in_query.size() + interface_pair_in_templ.size()))
 		return -1;
 	
-	map<string, double> chain_d02;
+	int* inv_obj_level_ali = new int[tsize];
+	for (int i = 0; i < tsize; i++)
+		inv_obj_level_ali[i] = -1;
 	for (int i = 0; i < qsize; i++){
 		if (-1 != obj_level_ali[i]){
+			inv_obj_level_ali[obj_level_ali[i]] = i;
+		}
+	}
+	
+	map<string, double> chain_d02_in_query;
+	for (int i = 0; i < qsize; i++){
+		if (-1 != this->obj_level_ali[i]){
 			double d02 = this->chain_index_corr_to_query__d02[i];
-			chain_d02[query->get_chain(i)] = d02;
+			chain_d02_in_query[query->get_chain(i)] = d02;
+		}
+	}
+	
+	map<string, double> chain_d02_in_templ;
+	for (int i = 0; i < tsize; i++){
+		if (-1 != inv_obj_level_ali[i]){
+			double d02 = this->chain_index_corr_to_query__d02[inv_obj_level_ali[i]];
+			chain_d02_in_templ[templ->get_chain(i)] = d02;
 		}
 	}
 	
 	// chain1-chain2, iTM-score
-	map<string, double> iTM;
+	map<string, double> iTM_in_query;
 	// chain1-chain2, number of interacted residues
-	map<string, int> interface_size;
+	map<string, int> interface_size_in_query;
 	
-	int n = this->aa_level_ali.size();
-	int m = interface_pair_in_query.size();
+	int n_in_query = this->aa_level_ali.size();
+	int m_in_query = interface_pair_in_query.size();
 	
-	for (int i = 0; i < m; i++){
+	for (int i = 0; i < m_in_query; i++){
 		INTERFACE_PAIR ip = interface_pair_in_query[i];
 		string qchain1 = ip.chain1;
 		string qchain2 = ip.chain2;
@@ -1294,15 +1313,11 @@ inline double CTMscoreComplex::calcluate_itmscore(const double& interact_dis_cut
 		int qind2 = ip.ind2;
 		
 		string key = qchain2+"-"+qchain1;
-		if (iTM.end() == iTM.find(key))
+		if (iTM_in_query.end() == iTM_in_query.find(key))
 			key = qchain1+"-"+qchain2;
 		
-		if (interface_size.end() == interface_size.find(key))
-			interface_size[key] = 1;
-		else interface_size[key] = interface_size[key] + 1;
-		
-		double d02_1 = chain_d02[qchain1];
-		double d02_2 = chain_d02[qchain2];
+		double d02_1 = chain_d02_in_query[qchain1];
+		double d02_2 = chain_d02_in_query[qchain2];
 		
 		bool is_dis2_1_ok = false;
 		double dis2_1 = 0;
@@ -1313,7 +1328,7 @@ inline double CTMscoreComplex::calcluate_itmscore(const double& interact_dis_cut
 		string tchain_2;
 		int tind_2 = -1;
 		
-		for (int j = 0; j < n; j++){
+		for (int j = 0; j < n_in_query; j++){
 			if (is_dis2_1_ok && is_dis2_2_ok)
 				break;
 			
@@ -1328,7 +1343,7 @@ inline double CTMscoreComplex::calcluate_itmscore(const double& interact_dis_cut
 				tchain_1 = ap.tchain;
 				tind_1 = ap.tind;
 			}
-					
+			
 			if (!is_dis2_2_ok && qchain == qchain2 && qind == qind2){
 				dis2_2 = dis2;
 				is_dis2_2_ok = true;
@@ -1341,47 +1356,112 @@ inline double CTMscoreComplex::calcluate_itmscore(const double& interact_dis_cut
 			Molecule* tchain1 = templ->get_mol_base_on_chain(tchain_1);
 			Molecule* tchain2 = templ->get_mol_base_on_chain(tchain_2);
 			double dis2_in_templ = CBaseFunc::distance2((*tchain1)[tind_1], (*tchain2)[tind_2]);
-			if (dis2_in_templ <= interact_dis_cut_pow2){
-				double tm1 = 1./(1. + dis2_1/d02_1);
-				double tm2 = 1./(1. + dis2_2/d02_2);
-				double tm = 2.*tm1*tm2/(tm1+tm2);
-				
-				if (iTM.end() == iTM.find(key))
-					iTM[key] = tm;
-				else iTM[key] = iTM[key] + tm;
-			}
+			
+			double delta = 1.;
+			if (dis2_in_templ <= interact_dis_cut_pow2)
+				delta = 2.;
+			
+			double tm1 = 1./(1. + dis2_1/d02_1);
+			double tm2 = 1./(1. + dis2_2/d02_2);
+			double tm = 1.*tm1*tm2/(tm1+tm2);
+			
+			if (iTM_in_query.end() == iTM_in_query.find(key))
+				iTM_in_query[key] = delta*tm;
+			else iTM_in_query[key] = iTM_in_query[key] + delta*tm;
 		}
+		
+		if (interface_size_in_query.end() == interface_size_in_query.find(key))
+			interface_size_in_query[key] = 1;
+		else interface_size_in_query[key] = interface_size_in_query[key] + 1;
 	}
 	
-//	int aligned_ninterface = 0;
-//	int ninterface = 0;
-//	double riTM = 0;
-//	for (map<string, int>::iterator iter = interface_size.begin(); iter != interface_size.end(); iter++){
-//		string key = iter->first;
-//		int isize = iter->second;
-//		ninterface++;
-//		
-//		map<string, double>::iterator __iter = iTM.find(key); 
-//		if (iTM.end() != __iter){
-//			double iTMval = __iter->second;
-//			iTMval /= isize;
-//			
-//			riTM += 1. / iTMval;
-//			aligned_ninterface++;
-//		}
-//	}
-//	
-//	return aligned_ninterface * aligned_ninterface / (ninterface * riTM); 
+	// for template interface
+	int n_in_templ = this->aa_level_ali.size();
+	int m_in_templ = interface_pair_in_templ.size();
+	
+	for (int i = 0; i < m_in_templ; i++){
+		INTERFACE_PAIR ip = interface_pair_in_templ[i];
+		string tchain1 = ip.chain1;
+		string tchain2 = ip.chain2;
+		int tind1 = ip.ind1;
+		int tind2 = ip.ind2;
+		
+		bool is_dis2_1_ok = false;
+		double dis2_1 = 0;
+		string qchain_1;
+		int qind_1 = -1;
+		bool is_dis2_2_ok = false;
+		double dis2_2 = 0;
+		string qchain_2;
+		int qind_2 = -1;
+		
+		for (int j = 0; j < n_in_templ; j++){
+			if (is_dis2_1_ok && is_dis2_2_ok)
+				break;
+			
+			ALIGN_PAIR ap = this->aa_level_ali[j];
+			string tchain = ap.tchain;
+			int tind = ap.tind;
+			double dis2 = ap.dis2;
+		
+			if (!is_dis2_1_ok && tchain == tchain1 && tind == tind1){
+				dis2_1 = dis2;
+				is_dis2_1_ok = true;
+				qchain_1 = ap.qchain;
+				qind_1 = ap.qind;
+			}
+					
+			if (!is_dis2_2_ok && tchain == tchain2 && tind == tind2){
+				dis2_2 = dis2;
+				is_dis2_2_ok = true;
+				qchain_2 = ap.qchain;
+				qind_2 = ap.qind;
+			}
+		}
+		
+		string key = qchain_2+"-"+qchain_1;
+		if (iTM_in_query.end() == iTM_in_query.find(key))
+			key = qchain_1+"-"+qchain_2;
+		
+		double d02_1 = chain_d02_in_templ[tchain1];
+		double d02_2 = chain_d02_in_templ[tchain2];
+		
+		if (is_dis2_1_ok && is_dis2_2_ok){
+			Molecule* qchain1 = query->get_mol_base_on_chain(qchain_1);
+			Molecule* qchain2 = query->get_mol_base_on_chain(qchain_2);
+			double dis2_in_query = CBaseFunc::distance2((*qchain1)[qind_1], (*qchain2)[qind_2]);
+			
+			// you know, if dis2_in_query <= interact_dis_cut_pow2), it will be calculated on query code part, we cannot calculated it twice.
+			if (dis2_in_query > interact_dis_cut_pow2){
+				// delta = 1 
+				double tm1 = 1./(1. + dis2_1/d02_1);
+				double tm2 = 1./(1. + dis2_2/d02_2);
+				double tm = 1.*tm1*tm2/(tm1+tm2); //2.*tm1*tm2/(tm1+tm2);
+				
+				if (iTM_in_query.end() == iTM_in_query.find(key))
+					iTM_in_query[key] = tm;
+				else iTM_in_query[key] = iTM_in_query[key] + tm;
+								
+				if (interface_size_in_query.end() == interface_size_in_query.find(key))
+					interface_size_in_query[key] = 1;
+				else interface_size_in_query[key] = interface_size_in_query[key] + 1;
+			}
+		}else{
+			if (interface_size_in_query.end() == interface_size_in_query.find(key))
+				interface_size_in_query[key] = 1;
+			else interface_size_in_query[key] = interface_size_in_query[key] + 1;
+		}
+	}
 
 	int ninterface = 0;
 	double iTM_final = 0;
-	for (map<string, int>::iterator iter = interface_size.begin(); iter != interface_size.end(); iter++){
+	for (map<string, int>::iterator iter = interface_size_in_query.begin(); iter != interface_size_in_query.end(); iter++){
 		string key = iter->first;
 		int isize = iter->second;
 		ninterface++;
 		
-		map<string, double>::iterator __iter = iTM.find(key); 
-		if (iTM.end() != __iter){
+		map<string, double>::iterator __iter = iTM_in_query.find(key); 
+		if (iTM_in_query.end() != __iter){
 			double iTMval = __iter->second;
 			iTMval /= isize;
 			
@@ -11796,7 +11876,7 @@ inline void Molecule::load_one_nucletide(const vector<string>* contents){
 		xyz[1] = y;
 		xyz[2] = z;
 		
-		if (0 == lline.compare(12, 4, g_atomtype_nuc)){
+		if (0 == lline.compare(12, 4, g_atomtype_nuc) || 0 == lline.compare(12, 4, g_atomtype_nuc_another_choise) ){
 			strcpy(cstr, (lline.substr(22, 4)).c_str());
 			sscanf(cstr, "%d", &res_orig_index);
 			char_following_res_orig_index = lline[26];
@@ -12097,6 +12177,14 @@ inline string Complex::transfer_ATOM_line_from_cif_to_pdb(const string &cifLine)
     std::string atomNum, atomType, atomName, altLoc, resName, chainId, resSeq, iCode;
     std::string x, y, z, occupancy, tempFactor;
     
+    // added at 20260322 
+    for (auto& f : fields) {
+	    if (f.size() >= 2 && ((f.front() == '"' && f.back() == '"') ||
+	                          (f.front() == '\'' && f.back() == '\''))) {
+	        f = f.substr(1, f.size() - 2);
+	    }
+	}
+    
     // 尝试不同的字段索引方案
     if (fields.size() >= 26) {
         // 可能是格式1，有更多字段
@@ -12122,7 +12210,7 @@ inline string Complex::transfer_ATOM_line_from_cif_to_pdb(const string &cifLine)
         // 检查fields[3]是否是合理的原子名称
         if (fields[3].length() <= 4 && 
             (fields[3][0] == 'N' || fields[3][0] == 'C' || fields[3][0] == 'O' || 
-             fields[3][0] == 'S' || fields[3][0] == 'H')) {
+             fields[3][0] == 'S' || fields[3][0] == 'H' || fields[3][0] == 'P')) {
             atomName = fields[3];
             altLoc = (fields.size() > 4) ? fields[4] : " ";
             resName = (fields.size() > 5) ? fields[5] : "UNK";
@@ -12238,6 +12326,8 @@ inline string Complex::transfer_ATOM_line_from_cif_to_pdb(const string &cifLine)
         pdbStream << std::setw(2) << std::right << atomType;
     }
     
+//    cout << "DEBUG : " << cifLine << "\t" << pdbStream.str() << endl; 
+    
     return pdbStream.str();
 }
 
@@ -12278,6 +12368,14 @@ inline string Complex::transfer_HETATM_line_from_cif_to_pdb(const string &cifLin
     std::string atomNum, atomType, atomName, altLoc, resName, chainId, resSeq, iCode;
     std::string x, y, z, occupancy, tempFactor;
     
+    // added at 20260322 
+    for (auto& f : fields) {
+	    if (f.size() >= 2 && ((f.front() == '"' && f.back() == '"') ||
+	                          (f.front() == '\'' && f.back() == '\''))) {
+	        f = f.substr(1, f.size() - 2);
+	    }
+	}
+    
     // 尝试不同的字段索引方案
     if (fields.size() >= 26) {
         // 可能是格式1，有更多字段
@@ -12303,7 +12401,7 @@ inline string Complex::transfer_HETATM_line_from_cif_to_pdb(const string &cifLin
         // 检查fields[3]是否是合理的原子名称
         if (fields[3].length() <= 4 && 
             (fields[3][0] == 'N' || fields[3][0] == 'C' || fields[3][0] == 'O' || 
-             fields[3][0] == 'S' || fields[3][0] == 'H')) {
+             fields[3][0] == 'S' || fields[3][0] == 'H' || fields[3][0] == 'P')) {
             atomName = fields[3];
             altLoc = (fields.size() > 4) ? fields[4] : " ";
             resName = (fields.size() > 5) ? fields[5] : "UNK";
